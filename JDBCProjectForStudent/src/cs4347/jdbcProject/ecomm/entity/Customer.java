@@ -13,6 +13,8 @@
 package cs4347.jdbcProject.ecomm.entity;
 
 import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class Customer
 {
@@ -29,6 +31,19 @@ public class Customer
 
 	public Customer()
 	{
+	}
+	
+	
+	public Customer(ResultSet rs) throws SQLException
+	{
+		this.id = rs.getLong("id");
+		this.firstName = rs.getString("first_name");
+		this.lastName = rs.getString("last_name");
+		this.gender = Character.toUpperCase(rs.getString("gender").charAt(0));
+		this.dob = rs.getDate("dob");
+		this.email = rs.getString("email");
+		//this.address = address;
+		//this.creditCard = creditCard;
 	}
 	
 	public Long getId()

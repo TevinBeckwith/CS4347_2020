@@ -12,6 +12,9 @@
 
 package cs4347.jdbcProject.ecomm.entity;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public class Product
 {
 	private Long id;
@@ -20,6 +23,20 @@ public class Product
 	private int prodCategory;
 	private String prodUPC;
 
+	public Product()
+	{
+		
+	}
+	
+	public Product(ResultSet rs) throws SQLException
+	{
+		this.id = rs.getLong("id");
+		this.prodName = rs.getString("prod_name");
+		this.prodDescription = rs.getString("prod_desc");
+		this.prodCategory = rs.getInt("prod_category");
+		this.prodUPC = rs.getString("prod_upc");
+	}
+	
 	public Long getId()
 	{
 		return id;

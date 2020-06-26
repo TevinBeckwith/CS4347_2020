@@ -18,6 +18,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 import cs4347.jdbcProject.ecomm.dao.CustomerDAO;
@@ -27,7 +28,22 @@ import cs4347.jdbcProject.ecomm.util.DAOException;
 public class CustomerDaoImpl implements CustomerDAO
 {
     private static final String insertSQL = 
-            "INSERT INTO customer (first_name, last_name, dob, gender, email) VALUES (?, ?, ?, ?, ?);";
+            "INSERT INTO CUSTOMER (first_name, last_name, dob, gender, email) VALUES (?, ?, ?, ?, ?);";
+    
+    private static final String retrieveSQL =
+    		"SELECT * FROM CUSTOMER WHERE id = ?;";
+    
+    private static final String updateSQL =
+    		"UPDATE CUSTOMER SET first_name = ?, last_name = ?, dob = ?, gender = ?, email = ? WHERE  id = ?;";
+    
+    private static final String deleteSQL =
+    		"DELETE FROM CUSTOMER WHERE id = ?;";
+    
+    private static final String retrieveByDOBSQL =
+    		"SELECT * FROM CUSTOMER WHERE dob BETWEEN ? AND ?;";
+    
+    private static final String retrieveByZipCodeSQL =
+    		"SELECT * FROM CUSTOMER WHERE dob BETWEEN ? AND ?;";
 
     @Override
     public Customer create(Connection connection, Customer customer) throws SQLException, DAOException
@@ -45,6 +61,7 @@ public class CustomerDaoImpl implements CustomerDAO
             ps.setString(4, String.valueOf(customer.getGender()));
             ps.setString(5, customer.getEmail());
             ps.executeUpdate();
+            
 
             // Copy the assigned ID to the customer instance.
             ResultSet keyRS = ps.getGeneratedKeys();
@@ -63,36 +80,153 @@ public class CustomerDaoImpl implements CustomerDAO
     @Override
     public Customer retrieve(Connection connection, Long id) throws SQLException, DAOException
     {
-        // TODO Auto-generated method stub
-        return null;
+        PreparedStatement ps = null;
+        try{
+        	ps = connection.prepareStatement(retrieveSQL);
+        	ps.setLong(1, id);
+        	ps.executeQuery();
+        	
+        	ResultSet rs = ps.getResultSet();
+        	rs.next();
+        	Customer customer = null;
+        	try{
+        		
+        		customer = new Customer(rs);
+        	 
+    		} catch (Exception e)
+    		{
+    			System.out.println(e.getMessage());
+    		}    	
+
+        	return customer;
+        }
+        finally {
+        	if (ps != null && !ps.isClosed()) {
+                ps.close();
+            }
+        }
+               
     }
 
     @Override
     public int update(Connection connection, Customer customer) throws SQLException, DAOException
     {
-        // TODO Auto-generated method stub
-        return 0;
+    	PreparedStatement ps = null;
+        try{
+        	ps = connection.prepareStatement(updateSQL);
+        	ps.setString(1, customer.getFirstName());
+        	ps.setString(2, customer.getLastName());
+        	ps.setDate(3, customer.getDob());
+        	ps.setString(4, String.valueOf(customer.getGender()));
+            ps.setString(5, customer.getEmail());
+            ps.setLong(6, customer.getId());
+        	ps.executeUpdate();
+        	
+        	return ps.getUpdateCount();
+        }
+        finally {
+        	if (ps != null && !ps.isClosed()) {
+                ps.close();
+            }
+        }
     }
 
     @Override
     public int delete(Connection connection, Long id) throws SQLException, DAOException
     {
-        // TODO Auto-generated method stub
-        return 0;
+    	PreparedStatement ps = null;
+        try{
+        	ps = connection.prepareStatement(deleteSQL);
+            ps.setLong(1, id);
+        	ps.executeUpdate();
+        	
+        	
+        	return ps.getUpdateCount();
+        }
+        finally {
+        	if (ps != null && !ps.isClosed()) {
+                ps.close();
+            }
+        }
     }
 
     @Override
     public List<Customer> retrieveByZipCode(Connection connection, String zipCode) throws SQLException, DAOException
     {
-        // TODO Auto-generated method stub
-        return null;
+    	PreparedStatement ps = null;
+        try{
+        	ps = connection.prepareStatement(retrieveByDOBSQL);
+ 
+        	ps.executeQuery();
+        	
+        	ResultSet rs = ps.getResultSet();
+        	
+        	List<Customer> customers = new ArrayList<Customer>();
+        	Customer customer = null;
+        	rs.next();
+        	while (rs.getRow() != 0)
+        	{       	
+            	try{
+            		
+            		customer = new Customer(rs);
+            		customers.add(customer);          		
+            	 
+        		} catch (Exception e)
+        		{
+        			System.out.println(e.getMessage());
+        		} 
+            	finally{
+            		rs.next();
+            	}
+        	}
+        	  	
+        	return customers;
+        }
+        finally {
+        	if (ps != null && !ps.isClosed()) {
+                ps.close();
+            }
+        }
     }
 
     @Override
     public List<Customer> retrieveByDOB(Connection connection, Date startDate, Date endDate) throws SQLException, DAOException
     {
-        // TODO Auto-generated method stub
-        return null;
+    	PreparedStatement ps = null;
+        try{
+        	ps = connection.prepareStatement(retrieveByDOBSQL);
+        	ps.setDate(1, startDate);
+        	ps.setDate(2, endDate);
+        	ps.executeQuery();
+        	
+        	ResultSet rs = ps.getResultSet();
+        	
+        	List<Customer> customers = new ArrayList<Customer>();
+        	Customer customer = null;
+        	rs.next();
+        	while (rs.getRow() != 0)
+        	{       	
+            	try{
+            		
+            		customer = new Customer(rs);
+            		customers.add(customer);          		
+            	 
+        		} catch (Exception e)
+        		{
+        			System.out.println(e.getMessage());
+        		} 
+            	finally{
+            		rs.next();
+            	}
+        	}
+        	  	
+        	return customers;
+        }
+        finally {
+        	if (ps != null && !ps.isClosed()) {
+                ps.close();
+            }
+        }
     }
 	
 }

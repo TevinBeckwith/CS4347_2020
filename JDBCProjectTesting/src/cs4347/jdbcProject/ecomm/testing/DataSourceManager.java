@@ -88,7 +88,7 @@ public class DataSourceManager {
 			for(int idx = 0; idx < 100; idx++) {				
 				Connection con = ds.getConnection();
 				Statement stmt = con.createStatement();
-				ResultSet rs = stmt.executeQuery("select count(*) from simple_company.customer");
+				ResultSet rs = stmt.executeQuery("select count(*) from simple_company.CUSTOMER");
 				if (rs.next()) {
 					System.out.println(idx + " Count: " + rs.getInt(1));
 				}

@@ -13,6 +13,8 @@
 package cs4347.jdbcProject.ecomm.entity;
 
 import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class Purchase
 {
@@ -22,6 +24,20 @@ public class Purchase
 	private Date purchaseDate;
 	private double purchaseAmount;
 
+	public Purchase()
+	{
+		
+	}
+	
+	public Purchase(ResultSet rs) throws SQLException
+	{
+		this.id = rs.getLong("id");
+		this.customerID = rs.getLong("CUSTOMER_id");
+		this.productID = rs.getLong("PRODUCT_id");
+		this.purchaseDate = rs.getDate("purchase_date");
+		this.purchaseAmount = rs.getDouble("purchase_amt");
+	}
+	
 	public Long getCustomerID()
 	{
 		return customerID;

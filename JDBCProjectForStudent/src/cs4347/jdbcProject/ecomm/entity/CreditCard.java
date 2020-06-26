@@ -12,12 +12,28 @@
 
 package cs4347.jdbcProject.ecomm.entity;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public class CreditCard
 {
 	private String name;
 	private String ccNumber;
 	private String expDate;
 	private String securityCode;
+	
+	public CreditCard()
+	{
+		
+	}
+	
+	public CreditCard(ResultSet rs) throws SQLException
+	{
+		this.name = rs.getString("name");
+		this.ccNumber = rs.getString("cc_number");
+		this.expDate = rs.getString("exp_date");
+		this.securityCode = rs.getString("securityCode");
+	}
 
 	public String getName()
 	{
