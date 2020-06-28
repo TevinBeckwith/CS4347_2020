@@ -43,7 +43,7 @@ public class CustomerDaoImpl implements CustomerDAO
     		"SELECT * FROM CUSTOMER WHERE dob BETWEEN ? AND ?;";
     
     private static final String retrieveByZipCodeSQL =
-    		"SELECT * FROM CUSTOMER WHERE dob BETWEEN ? AND ?;";
+    		"SELECT * FROM CUSTOMER, ADDRESS WHERE CUSTOMER.id = ADDRESS.CUSTOMER_id AND zipcode = ?;";
 
     @Override
     public Customer create(Connection connection, Customer customer) throws SQLException, DAOException
@@ -155,7 +155,8 @@ public class CustomerDaoImpl implements CustomerDAO
     {
     	PreparedStatement ps = null;
         try{
-        	ps = connection.prepareStatement(retrieveByDOBSQL);
+        	ps = connection.prepareStatement(retrieveByZipCodeSQL);
+        	ps.setString(1, zipCode);
  
         	ps.executeQuery();
         	

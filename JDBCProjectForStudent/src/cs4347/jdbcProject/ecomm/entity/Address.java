@@ -12,6 +12,9 @@
 
 package cs4347.jdbcProject.ecomm.entity;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public class Address
 {
 	private String address1;
@@ -19,6 +22,19 @@ public class Address
 	private String city;
 	private String state;
 	private String zipcode;
+	
+	public Address() {
+		
+	}
+	
+	public Address(ResultSet rs) throws SQLException
+	{
+		this.address1 = rs.getString("address1");
+		this.address2 = rs.getString("address2");
+		this.city = rs.getString("city");
+		this.state = rs.getString("state");
+		this.zipcode = rs.getString("zipcode");
+	}
 
 	public String getAddress1()
 	{
