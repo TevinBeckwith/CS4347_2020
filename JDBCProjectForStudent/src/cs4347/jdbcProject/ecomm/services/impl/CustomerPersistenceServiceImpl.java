@@ -87,36 +87,132 @@ public class CustomerPersistenceServiceImpl implements CustomerPersistenceServic
     @Override
     public Customer retrieve(Long id) throws SQLException, DAOException
     {
-        // TODO Auto-generated method stub
-        return null;
+        CustomerDAO customerDAO = new CustomerDaoImpl();
+        AddressDAO addressDAO = new AddressDaoImpl();
+        CreditCardDAO ccDAO = new CreditCardDaoImpl();
+        Connection connection = dataSource.getConnection();
+        
+        
+        try{
+        	connection.setAutoCommit(false);
+        	Customer customer = customerDAO.retrieve(connection, id);
+        	
+        	customer.setAddress(addressDAO.retrieveForCustomerID(connection, id));
+            customer.setCreditCard(ccDAO.retrieveForCustomerID(connection, id));
+            return customer;
+            
+        } catch (Exception e) {
+        	connection.rollback();
+        	throw e;
+        }
+        finally {
+            if (connection != null) {
+                connection.setAutoCommit(true);
+            }
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+        }
+       
     }
 
     @Override
     public int update(Customer customer) throws SQLException, DAOException
     {
-        // TODO Auto-generated method stub
-        return 0;
+    	CustomerDAO customerDAO = new CustomerDaoImpl();
+    	AddressDAO addressDAO = new AddressDaoImpl();
+        CreditCardDAO ccDAO = new CreditCardDaoImpl();
+    	Connection connection = dataSource.getConnection();
+    	
+    	try{
+    		connection.setAutoCommit(false);
+    		return customerDAO.update(connection, customer);
+    		
+    	} catch (Exception e) {
+        	connection.rollback();
+        	throw e;
+        }
+    	finally {
+            if (connection != null) {
+                connection.setAutoCommit(true);
+            }
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+        }
+    	    	
     }
 
     @Override
     public int delete(Long id) throws SQLException, DAOException
     {
-        // TODO Auto-generated method stub
-        return 0;
+    	CustomerDAO customerDAO = new CustomerDaoImpl();
+    	Connection connection = dataSource.getConnection();
+    	
+    	try {
+    		connection.setAutoCommit(false);
+    		return customerDAO.delete(connection, id);
+    		
+    	} catch (Exception e) {
+        	connection.rollback();
+        	throw e;
+        }
+    	finally {
+            if (connection != null) {
+                connection.setAutoCommit(true);
+            }
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+        }
     }
 
     @Override
     public List<Customer> retrieveByZipCode(String zipCode) throws SQLException, DAOException
     {
-        // TODO Auto-generated method stub
-        return null;
+    	CustomerDAO customerDAO = new CustomerDaoImpl();
+    	Connection connection = dataSource.getConnection();
+    	    
+    	try{
+    		connection.setAutoCommit(false);
+    		return customerDAO.retrieveByZipCode(connection, zipCode);
+    		
+    	} catch (Exception e) {
+        	connection.rollback();
+        	throw e;
+        }
+    	finally {
+            if (connection != null) {
+                connection.setAutoCommit(true);
+            }
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+        }
     }
 
     @Override
     public List<Customer> retrieveByDOB(Date startDate, Date endDate) throws SQLException, DAOException
     {
-        // TODO Auto-generated method stub
-        return null;
+    	CustomerDAO customerDAO = new CustomerDaoImpl();
+    	Connection connection = dataSource.getConnection();
+    	    	
+    	try{
+    		connection.setAutoCommit(false);
+    		return customerDAO.retrieveByDOB(connection, startDate, endDate);
+    		
+    	} catch (Exception e) {
+        	connection.rollback();
+        	throw e;
+        }
+    	finally {
+            if (connection != null) {
+                connection.setAutoCommit(true);
+            }
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+        }
     }
 
     private DataSource dataSource;

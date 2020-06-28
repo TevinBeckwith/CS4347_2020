@@ -21,7 +21,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import cs4347.jdbcProject.ecomm.dao.CustomerDAO;
+import cs4347.jdbcProject.ecomm.entity.Address;
+import cs4347.jdbcProject.ecomm.entity.CreditCard;
 import cs4347.jdbcProject.ecomm.entity.Customer;
 import cs4347.jdbcProject.ecomm.util.DAOException;
 
@@ -31,19 +34,28 @@ public class CustomerDaoImpl implements CustomerDAO
             "INSERT INTO CUSTOMER (first_name, last_name, dob, gender, email) VALUES (?, ?, ?, ?, ?);";
     
     private static final String retrieveSQL =
-    		"SELECT * FROM CUSTOMER WHERE id = ?;";
+    		"SELECT * FROM CUSTOMER AS C LEFT JOIN ADDRESS AS A ON C.id = A.CUSTOMER_id "
+    		+ "LEFT JOIN CREDIT_CARD AS CC ON C.id = CC.CUSTOMER_id WHERE  C.id = ?;";
     
-    private static final String updateSQL =
+    private static final String updateCustomerSQL =
     		"UPDATE CUSTOMER SET first_name = ?, last_name = ?, dob = ?, gender = ?, email = ? WHERE  id = ?;";
     
+    private static final String updateAddressSQL =
+    		"UPDATE ADDRESS SET address1 = ?, address2 = ?, city = ?, state = ?, zipcode = ? WHERE CUSTOMER_id = ?;";
+    
+    private static final String updateCreditCardSQL =
+    		"UPDATE CREDIT_CARD SET name = ?, cc_number = ?, exp_date = ?, securityCode = ? WHERE CUSTOMER_id = ?;";
+       
     private static final String deleteSQL =
     		"DELETE FROM CUSTOMER WHERE id = ?;";
     
     private static final String retrieveByDOBSQL =
-    		"SELECT * FROM CUSTOMER WHERE dob BETWEEN ? AND ?;";
+    		"SELECT * FROM CUSTOMER AS C LEFT JOIN ADDRESS AS A ON C.id = A.CUSTOMER_id "
+    		+ "LEFT JOIN CREDIT_CARD AS CC ON C.id = CC.CUSTOMER_id WHERE C.dob BETWEEN ? AND ?;";
     
     private static final String retrieveByZipCodeSQL =
-    		"SELECT * FROM CUSTOMER, ADDRESS WHERE CUSTOMER.id = ADDRESS.CUSTOMER_id AND zipcode = ?;";
+    		"SELECT * FROM CUSTOMER AS C LEFT JOIN ADDRESS AS A ON C.id = A.CUSTOMER_id "
+    		+ "LEFT JOIN CREDIT_CARD AS CC ON C.id = CC.CUSTOMER_id WHERE A.zipcode = ?;";
 
     @Override
     public Customer create(Connection connection, Customer customer) throws SQLException, DAOException
@@ -111,22 +123,57 @@ public class CustomerDaoImpl implements CustomerDAO
     @Override
     public int update(Connection connection, Customer customer) throws SQLException, DAOException
     {
-    	PreparedStatement ps = null;
+    	PreparedStatement customerPS = null;
+    	PreparedStatement addressPS = null;
+    	PreparedStatement creditPS = null;
         try{
-        	ps = connection.prepareStatement(updateSQL);
-        	ps.setString(1, customer.getFirstName());
-        	ps.setString(2, customer.getLastName());
-        	ps.setDate(3, customer.getDob());
-        	ps.setString(4, String.valueOf(customer.getGender()));
-            ps.setString(5, customer.getEmail());
-            ps.setLong(6, customer.getId());
-        	ps.executeUpdate();
+        	customerPS = connection.prepareStatement(updateCustomerSQL);
+        	customerPS.setString(1, customer.getFirstName());
+        	customerPS.setString(2, customer.getLastName());
+        	customerPS.setDate(3, customer.getDob());
+        	customerPS.setString(4, String.valueOf(customer.getGender()));
+        	customerPS.setString(5, customer.getEmail());
+        	customerPS.setLong(6, customer.getId());
+        	customerPS.executeUpdate();
         	
-        	return ps.getUpdateCount();
+        	Address address = customer.getAddress();
+            
+            if (address != null)
+            {
+            	addressPS = connection.prepareStatement(updateAddressSQL);
+            	addressPS.setString(1, address.getAddress1());
+            	addressPS.setString(2, address.getAddress2());
+            	addressPS.setString(3, address.getCity());
+            	addressPS.setString(4, address.getState());
+            	addressPS.setString(5, address.getZipcode());
+            	addressPS.setLong(6, customer.getId());
+            	addressPS.executeUpdate();
+            }
+            
+            CreditCard credit = customer.getCreditCard();
+            
+            if (credit != null)
+            {
+            	creditPS = connection.prepareStatement(updateCreditCardSQL);
+            	creditPS.setString(1, credit.getName());
+            	creditPS.setString(2, credit.getCcNumber());
+            	creditPS.setString(3, credit.getExpDate());
+            	creditPS.setString(4, credit.getSecurityCode());
+            	creditPS.setLong(5, customer.getId());
+            	creditPS.executeUpdate();
+            }
+        	
+        	return customerPS.getUpdateCount();
         }
         finally {
-        	if (ps != null && !ps.isClosed()) {
-                ps.close();
+        	if (customerPS != null && !customerPS.isClosed()) {
+        		customerPS.close();
+            }
+        	if (addressPS != null && !addressPS.isClosed()) {
+        		addressPS.close();
+            }
+        	if (creditPS != null && !creditPS.isClosed()) {
+        		creditPS.close();
             }
         }
     }

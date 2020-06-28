@@ -42,8 +42,8 @@ public class Customer
 		this.gender = Character.toUpperCase(rs.getString("gender").charAt(0));
 		this.dob = rs.getDate("dob");
 		this.email = rs.getString("email");
-		//this.address = address;
-		//this.creditCard = creditCard;
+		this.address = new Address(rs);
+		this.creditCard = new CreditCard(rs);
 	}
 	
 	public Long getId()
