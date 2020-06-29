@@ -55,7 +55,7 @@ public class PurchaseDaoImpl implements PurchaseDAO
     public Purchase create(Connection connection, Purchase purchase) throws SQLException, DAOException
     {
     	if (purchase.getId() != null) {
-            throw new DAOException("Trying to insert Customer with NON-NULL ID");
+            throw new DAOException("Trying to insert Purchase with NON-NULL ID");
         }
 
         PreparedStatement ps = null;
