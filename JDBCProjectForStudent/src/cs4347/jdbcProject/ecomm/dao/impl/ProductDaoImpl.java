@@ -190,7 +190,7 @@ public class ProductDaoImpl implements ProductDAO
     {
     	PreparedStatement ps = null;
         try{
-        	ps = connection.prepareStatement(retrieveByCategorySQL);
+        	ps = connection.prepareStatement(retrieveByUPCSQL);
         	ps.setString(1, upc);
         	ps.executeQuery();
         	
