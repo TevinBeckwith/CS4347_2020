@@ -48,7 +48,7 @@ public class PurchaseDaoImpl implements PurchaseDAO
     		"SELECT * FROM PURCHASE WHERE PRODUCT_id = ?;";
     
     private static final String retrievePurchaseSummarySQL =
-    		"SELECT AVG(purchase_amt) FROM PURCHASE WHERE CUSTOMER_id = ?;";
+    		"SELECT AVG(purchase_amt), MIN(purchase_amt), MAX(purchase_amt) FROM PURCHASE WHERE CUSTOMER_id = ?;";
     
 
     @Override
@@ -235,11 +235,7 @@ public class PurchaseDaoImpl implements PurchaseDAO
     public PurchaseSummary retrievePurchaseSummary(Connection connection, Long customerID) throws SQLException, DAOException
     {
     	PurchaseSummary summary = new PurchaseSummary();
-    	
-        List<Purchase> purchases = retrieveForCustomerID(connection, customerID);
-        
-        summary.maxPurchase = (float)purchases.get(purchases.size() - 1).getPurchaseAmount();
-        summary.minPurchase = (float)purchases.get(0).getPurchaseAmount();
+           
         
         PreparedStatement ps = null;
         try{
@@ -251,6 +247,8 @@ public class PurchaseDaoImpl implements PurchaseDAO
         	rs.next();
         	
         	summary.avgPurchase = rs.getFloat("AVG(purchase_amt)");
+        	summary.maxPurchase = rs.getFloat("MAX(purchase_amt)");
+        	summary.minPurchase = rs.getFloat("MIN(purchase_amt)");
         	
         	return summary;
         }
