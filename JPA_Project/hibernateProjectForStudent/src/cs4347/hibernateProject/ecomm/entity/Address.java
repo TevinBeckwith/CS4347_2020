@@ -10,9 +10,22 @@
  */ 
  
 package cs4347.hibernateProject.ecomm.entity;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
+@Entity
+@Table(name = "Addresses")
 public class Address 
 {
+	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
     private String address1;
@@ -20,8 +33,12 @@ public class Address
 	private String city;
 	private String state;
 	private String zipcode;
+	
+	@ManyToOne(fetch=FetchType.EAGER)
+    @JoinColumn(name="customer_id", unique=false)
 	private Customer customer;
 
+	
 	public Long getId()
 	{
 		return id;
@@ -32,6 +49,7 @@ public class Address
 		this.id = id;
 	}
 
+	//@Column(name = "address1")
 	public String getAddress1()
 	{
 		return address1;
@@ -42,6 +60,7 @@ public class Address
 		this.address1 = address1;
 	}
 
+	//@Column(name = "address2")
 	public String getAddress2()
 	{
 		return address2;
@@ -52,6 +71,7 @@ public class Address
 		this.address2 = address2;
 	}
 
+	//@Column(name = "city")
 	public String getCity()
 	{
 		return city;
@@ -62,6 +82,7 @@ public class Address
 		this.city = city;
 	}
 
+	//@Column(name = "state")
 	public String getState()
 	{
 		return state;
@@ -72,6 +93,7 @@ public class Address
 		this.state = state;
 	}
 
+	//@Column(name = "zipcode")
 	public String getZipcode()
 	{
 		return zipcode;
@@ -82,6 +104,7 @@ public class Address
 		this.zipcode = zipcode;
 	}
 
+	//@Column(name = "Customer_ID")
     public Customer getCustomer()
     {
         return customer;

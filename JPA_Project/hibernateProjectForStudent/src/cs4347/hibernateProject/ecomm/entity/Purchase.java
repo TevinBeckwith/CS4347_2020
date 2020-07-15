@@ -13,20 +13,35 @@ package cs4347.hibernateProject.ecomm.entity;
 
 import java.sql.Date;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
+@Entity
+@Table(name = "Purchases")
 public class Purchase
 {
+	@Column(name = "Purchase_ID")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
     
 	private Date purchaseDate;
 	private double purchaseAmount;
     
-	@OneToOne(fetch = FetchType.EAGER)
+	@OneToOne(fetch = FetchType.EAGER,cascade=CascadeType.ALL)
+	@JoinColumn(name = "Customer_ID")
 	private Customer customer;
     
-	@OneToOne(fetch = FetchType.EAGER)
+	@OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+	@JoinColumn(name = "Product_ID")
 	private Product product;
 
 	public Long getId()

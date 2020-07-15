@@ -14,9 +14,27 @@ package cs4347.hibernateProject.ecomm.entity;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
+import javax.persistence.Table;
+
+
  
+@Entity
+@Table(name = "Customers")
 public class Customer 
 {
+	@Column(name = "Customer_ID")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
     private String firstName;
@@ -26,15 +44,21 @@ public class Customer
 	private String email;
 
 	// You will need @OrderColumn to avoid MultipleBagFetchException
-	//@OrderColumn
+	@OrderColumn
+	@OneToMany(fetch=FetchType.LAZY, mappedBy="customer", cascade=CascadeType.ALL)
 	private List<Address> addressList;
+	
+	@OrderColumn
+	@OneToMany(fetch=FetchType.LAZY, mappedBy="customer", cascade=CascadeType.ALL)
 	private List<CreditCard> creditCardList;
 
+	
     public Customer()
     {
         addressList = new ArrayList<Address>();
         creditCardList = new ArrayList<CreditCard>();
     }
+    
     
 	public Long getId()
 	{
@@ -46,6 +70,7 @@ public class Customer
 		this.id = id;
 	}
 
+	@Column(name = "first_name")
 	public String getFirstName()
 	{
 		return firstName;
@@ -56,6 +81,7 @@ public class Customer
 		this.firstName = firstName;
 	}
 
+	@Column(name = "last_name")
 	public String getLastName()
 	{
 		return lastName;
@@ -66,6 +92,7 @@ public class Customer
 		this.lastName = lastName;
 	}
 
+	@Column(name = "gender")
 	public Character getGender()
 	{
 		return gender;
@@ -76,6 +103,7 @@ public class Customer
 		this.gender = gender;
 	}
 
+	@Column(name = "dob")
 	public Date getDob()
 	{
 		return dob;
@@ -86,6 +114,7 @@ public class Customer
 		this.dob = dob;
 	}
 
+	@Column(name = "email")
 	public String getEmail()
 	{
 		return email;
