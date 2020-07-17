@@ -16,7 +16,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
+import javax.persistence.TypedQuery;
 import cs4347.hibernateProject.ecomm.entity.Purchase;
 import cs4347.hibernateProject.ecomm.services.PurchasePersistenceService;
 import cs4347.hibernateProject.ecomm.services.PurchaseSummary;
@@ -52,7 +52,7 @@ public class PurchasePersistenceServiceImpl implements PurchasePersistenceServic
 			em.getTransaction().begin();
 			Purchase purchase = em.find(Purchase.class, id);
 			em.getTransaction().commit();
-			return cust;
+			return purchase;
 		}
 		catch (Exception ex) {
 			em.getTransaction().rollback();
@@ -97,7 +97,8 @@ public class PurchasePersistenceServiceImpl implements PurchasePersistenceServic
 	public List<Purchase> retrieveForCustomerID(Long customerID) throws SQLException, DAOException
 	{
 		try {
-			TypedQuery<Purchase> q = em.createQuery(("SELECT p FROM Purchase p WHERE Customer_ID = " + Integer.toString(customerID))
+			String test = String.valueOf(customerID);
+			TypedQuery<Purchase> q = em.createQuery(("SELECT p FROM Purchase p WHERE Customer_ID = " + test)
 					, Purchase.class);
 			List<Purchase> purchases = q.getResultList();
 			return purchases;
@@ -111,15 +112,22 @@ public class PurchasePersistenceServiceImpl implements PurchasePersistenceServic
 	@Override
 	public PurchaseSummary retrievePurchaseSummary(Long customerID) throws SQLException, DAOException
 	{
-		return null;
-		//shall finish in morning before the meeting.
+		PurchaseSummary summary = new PurchaseSummary();
+    	
+        List<Purchase> purchases = retrieveForCustomerID(customerID);
+        
+        summary.maxPurchase = (float)purchases.get(purchases.size() - 1).getPurchaseAmount();
+        summary.minPurchase = (float)purchases.get(0).getPurchaseAmount();
+        summary.avgPurchase = (float)purchases.get(purchases.size()/2).getPurchaseAmount();
+        return summary; 
 	}
 
 	@Override
 	public List<Purchase> retrieveForProductID(Long productID) throws SQLException, DAOException
 	{
 		try {
-			TypedQuery<Purchase> q = em.createQuery(("SELECT p FROM Purchase p WHERE Product_ID = " + Integer.toString(productID))
+			String test = String.valueOf(productID);
+			TypedQuery<Purchase> q = em.createQuery(("SELECT p FROM Purchase p WHERE Product_ID = " + test)
 					, Purchase.class);
 			List<Purchase> purchases = q.getResultList();
 			return purchases;
