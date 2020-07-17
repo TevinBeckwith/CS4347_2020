@@ -34,39 +34,99 @@ public class PurchasePersistenceServiceImpl implements PurchasePersistenceServic
 	@Override
 	public void create(Purchase purchase) throws SQLException, DAOException
 	{
+		try {
+			em.getTransaction().begin();
+			em.persist(purchase);
+			em.getTransaction().commit();
+		}
+		catch (Exception ex) {
+			em.getTransaction().rollback();
+			throw ex;
+		}
 	}
 
 	@Override
 	public Purchase retrieve(Long id) throws SQLException, DAOException
 	{
-		return null;
+		try {
+			em.getTransaction().begin();
+			Purchase purchase = em.find(Purchase.class, id);
+			em.getTransaction().commit();
+			return cust;
+		}
+		catch (Exception ex) {
+			em.getTransaction().rollback();
+			throw ex;
+		}
 	}
 
 	@Override
 	public void update(Purchase purchase) throws SQLException, DAOException
 	{
+		try {
+			em.getTransaction().begin();
+			Purchase p2 = em.find(Purchase.class, purchase.getId());
+			p2.setPurchaseDate(purchase.getPurchaseDate());
+			p2.setPurchaseAmount(purchase.getPurchaseAmount());
+			p2.setCustomer(purchase.getCustomer());
+			p2.setProduct(purchase.getProduct());
+			em.getTransaction().commit();
+		}
+		catch (Exception ex) {
+			em.getTransaction().rollback();
+			throw ex;
+		}
 	}
 
 	@Override
 	public void delete(Long id) throws SQLException, DAOException
 	{
+	try {	
+			em.getTransaction().begin();
+			Purchase purchase = em.find(Purchase.class, id);
+			em.remove(purchase);
+			em.getTransaction().commit();
+		}
+		catch (Exception ex) {
+			em.getTransaction().rollback();
+			throw ex;
+		}
 	}
 
 	@Override
 	public List<Purchase> retrieveForCustomerID(Long customerID) throws SQLException, DAOException
 	{
-		return null;
+		try {
+			TypedQuery<Purchase> q = em.createQuery(("SELECT p FROM Purchase p WHERE Customer_ID = " + Integer.toString(customerID))
+					, Purchase.class);
+			List<Purchase> purchases = q.getResultList();
+			return purchases;
+		}
+		catch (Exception ex) {
+			em.getTransaction().rollback();
+			throw ex;
+		}
 	}
 
 	@Override
 	public PurchaseSummary retrievePurchaseSummary(Long customerID) throws SQLException, DAOException
 	{
 		return null;
+		//shall finish in morning before the meeting.
 	}
 
 	@Override
 	public List<Purchase> retrieveForProductID(Long productID) throws SQLException, DAOException
 	{
-		return null;
+		try {
+			TypedQuery<Purchase> q = em.createQuery(("SELECT p FROM Purchase p WHERE Product_ID = " + Integer.toString(productID))
+					, Purchase.class);
+			List<Purchase> purchases = q.getResultList();
+			return purchases;
+		}
+		catch (Exception ex) {
+			em.getTransaction().rollback();
+			throw ex;
+		}
 	}
 }
