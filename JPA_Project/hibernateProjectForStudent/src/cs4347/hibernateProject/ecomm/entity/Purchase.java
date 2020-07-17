@@ -36,11 +36,11 @@ public class Purchase
 	private Date purchaseDate;
 	private double purchaseAmount;
     
-	@OneToOne(fetch = FetchType.EAGER,cascade=CascadeType.ALL)
+	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "Customer_ID")
 	private Customer customer;
     
-	@OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "Product_ID")
 	private Product product;
 
