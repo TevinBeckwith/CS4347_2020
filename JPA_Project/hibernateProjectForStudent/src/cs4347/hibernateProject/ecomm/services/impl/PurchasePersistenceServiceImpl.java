@@ -114,18 +114,23 @@ public class PurchasePersistenceServiceImpl implements PurchasePersistenceServic
 	{
 		PurchaseSummary summary = new PurchaseSummary();
     	
-        	List<Purchase> purchases = retrieveForCustomerID(customerID);
-        
-       	 	summary.maxPurchase = (float)purchases.get(purchases.size() - 1).getPurchaseAmount();
-        	summary.minPurchase = (float)purchases.get(0).getPurchaseAmount();
-        	float avg = 0;
-        	for(int a = 0; a < purchases.size(); a++)
-        	{
-        		avg = avg+(float)purchases.get(a).getPurchaseAmount();
+        	try {  
+        		TypedQuery<Double> q = em.createQuery(("SELECT MIN(p.purchaseAmount) FROM Purchase p WHERE Customer_ID = " + String.valueOf(customerID))
+				, Double.class);
+        		summary.minPurchase = q.getSingleResult();
+        		q = em.createQuery(("SELECT MAX(p.purchaseAmount) FROM Purchase p WHERE Customer_ID = " + String.valueOf(customerID))
+				, Double.class);
+        		System.out.println(summary.maxPurchase);
+        		q = em.createQuery(("SELECT AVG(p.purchaseAmount) FROM Purchase p WHERE Customer_ID = " + String.valueOf(customerID))
+				, Double.class);
+        		summary.avgPurchase = q.getSingleResult();
+        		return summary;
         	}
-        	avg = avg/(float)purchases.size();
-        	summary.avgPurchase = avg;
-        	return summary; 
+        catch(Exception ex) {
+			em.getTransaction().rollback();
+			throw ex;
+        	
+        }
 	}
 
 	@Override
