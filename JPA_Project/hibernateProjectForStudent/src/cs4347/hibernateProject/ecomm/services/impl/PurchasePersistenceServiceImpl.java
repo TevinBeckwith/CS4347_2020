@@ -114,12 +114,18 @@ public class PurchasePersistenceServiceImpl implements PurchasePersistenceServic
 	{
 		PurchaseSummary summary = new PurchaseSummary();
     	
-        List<Purchase> purchases = retrieveForCustomerID(customerID);
+        	List<Purchase> purchases = retrieveForCustomerID(customerID);
         
-        summary.maxPurchase = (float)purchases.get(purchases.size() - 1).getPurchaseAmount();
-        summary.minPurchase = (float)purchases.get(0).getPurchaseAmount();
-        summary.avgPurchase = (float)purchases.get(purchases.size()/2).getPurchaseAmount();
-        return summary; 
+       	 	summary.maxPurchase = (float)purchases.get(purchases.size() - 1).getPurchaseAmount();
+        	summary.minPurchase = (float)purchases.get(0).getPurchaseAmount();
+        	float avg = 0;
+        	for(int a = 0; a < purchases.size(); a++)
+        	{
+        		avg = avg+(float)purchases.get(a).getPurchaseAmount();
+        	}
+        	avg = avg/(float)purchases.size();
+        	summary.avgPurchase = avg;
+        	return summary; 
 	}
 
 	@Override
