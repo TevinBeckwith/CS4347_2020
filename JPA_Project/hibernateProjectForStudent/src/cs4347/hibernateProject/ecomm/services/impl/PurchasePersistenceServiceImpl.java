@@ -120,7 +120,7 @@ public class PurchasePersistenceServiceImpl implements PurchasePersistenceServic
         		summary.minPurchase = q.getSingleResult();
         		q = em.createQuery(("SELECT MAX(p.purchaseAmount) FROM Purchase p WHERE Customer_ID = " + String.valueOf(customerID))
 				, Double.class);
-        		System.out.println(summary.maxPurchase);
+        		summary.maxPurchase = q.getSingleResult();
         		q = em.createQuery(("SELECT AVG(p.purchaseAmount) FROM Purchase p WHERE Customer_ID = " + String.valueOf(customerID))
 				, Double.class);
         		summary.avgPurchase = q.getSingleResult();
